@@ -1,0 +1,29 @@
+services:
+  api:
+    build:
+      context: ./Backend
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Users: Data Source=/data/app.db
+      Cors__Origins__0: http://localhost:5173
+    ports:
+      - "8080:8080"
+    volumes:
+      - user-data:/data
+
+  frontend:
+    build:
+      context: ./frontend
+    environment:
+      VITE_API_BASE_URL: http://localhost:8080
+      VITE_ENTRA_CLIENT_ID: ${VITE_ENTRA_CLIENT_ID:-}
+      VITE_ENTRA_TENANT_ID: ${VITE_ENTRA_TENANT_ID:-}
+      VITE_ENTRA_API_SCOPE: ${VITE_ENTRA_API_SCOPE:-}
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+
+volumes:
+  user-data:
